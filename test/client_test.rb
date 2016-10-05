@@ -48,18 +48,24 @@ class ClientTest < TinyTds::TestCase
 
     ['CP850', 'CP1252', 'ISO-8859-1'].each do |encoding|
       it "allows valid iconv character set - #{encoding}" do
-        client = new_connection(:encoding => encoding)
-        assert_equal encoding, client.charset
-        assert_equal Encoding.find(encoding), client.encoding
-        client.close
+        begin
+          client = new_connection(:encoding => encoding)
+          assert_equal encoding, client.charset
+          assert_equal Encoding.find(encoding), client.encoding
+        ensure
+          client.close if client
+        end
       end
     end
 
     it 'must be able to use :host/:port connection' do
       host = ENV['TINYTDS_UNIT_HOST_TEST'] || ENV['TINYTDS_UNIT_HOST']
       port = ENV['TINYTDS_UNIT_PORT_TEST'] || ENV['TINYTDS_UNIT_PORT'] || 1433
-      client = new_connection dataserver: nil, host: host, port: port
-      client.close
+      begin
+        client = new_connection dataserver: nil, host: host, port: port
+      ensure
+        client.close if client
+      end
     end unless sqlserver_azure?
 
   end
