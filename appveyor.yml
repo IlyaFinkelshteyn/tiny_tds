@@ -48,4 +48,5 @@ environment:
     - ruby_version: "23-x64"
 on_failure:
   - find -name compile.log | xargs cat
-
+services:
+  - mssql2016
